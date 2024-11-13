@@ -13,7 +13,7 @@ type PostOffice struct {
 type Customer struct {
 	ID           uint      `gorm:"primaryKey"`
 	Name         string    `gorm:"not null"`
-	ContactInfo  string
+	ContactInfo  string	   `gorm:"not null"`
 	RegDate      time.Time `gorm:"not null"`
 	Addresses    []Address `gorm:"foreignKey:ClientID;constraint:OnDelete:CASCADE"`
 	SentItems    []PostalItem `gorm:"foreignKey:SenderID;constraint:OnDelete:CASCADE"`
@@ -27,7 +27,7 @@ type Address struct {
 	City      string `gorm:"not null"`
 	Street    string `gorm:"not null"`
 	ClientID  uint   `gorm:"not null"`
-	PostalCode string
+	PostalCode string`gorm:"not null"`
 	Client    Customer `gorm:"foreignKey:ClientID;constraint:OnDelete:CASCADE"`
 }
 
@@ -36,7 +36,7 @@ type PostalItem struct {
 	TrackNum     string    `gorm:"not null;unique;index"`
 	Type         string    `gorm:"not null"`
 	Weight       float64   `gorm:"not null"`
-	Status       string
+	Status       string    `gorm:"not null"`
 	DispDate     time.Time `gorm:"not null"`
 	ArrivalDate  time.Time
 	SenderID     uint
@@ -52,7 +52,7 @@ type PostalItem struct {
 type Payment struct {
 	ID            uint      `gorm:"primaryKey"`
 	Amount        float64   `gorm:"not null"`
-	PaymentMethod string
+	PaymentMethod string    `gorm:"not null"`
 	PaymentDate   time.Time `gorm:"not null"`
 	PostalItemID  uint
 	CustomerID    uint
@@ -63,7 +63,7 @@ type Payment struct {
 type PostalStatus struct {
 	ID          uint   `gorm:"primaryKey"`
 	StatusName  string `gorm:"not null"`
-	Description string
+	Description string 
 	StatusTransactions []StatusTransaction `gorm:"foreignKey:StatusID;constraint:OnDelete:CASCADE"`
 }
 
