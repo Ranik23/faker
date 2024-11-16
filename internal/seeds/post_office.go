@@ -11,12 +11,9 @@ import (
 func CreatePostOffice(db *gorm.DB) *models.PostOffice {
 
 	var address models.Address
-	for {
-		if err := db.Order("RANDOM()").First(&address).Error; err != nil {
-			log.Println("Failed to fetch a random Address:", err)
-			continue
-		}
-		break
+	if err := db.Order("RANDOM()").First(&address).Error; err != nil {
+		log.Println("Failed to fetch a random Address:", err)
+		return nil
 	}
 	log.Printf("Selected Address ID: %d, City: %s, Country: %s", address.ID, address.City, address.Country)
 

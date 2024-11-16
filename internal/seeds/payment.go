@@ -12,14 +12,12 @@ import (
 func CreatePayment(db *gorm.DB) *models.Payment {
 
 	var postalItem models.PostalItem
-
-	for {
-		if err := db.Order("RANDOM()").First(&postalItem).Error; err != nil {
-			log.Println("Failed to fetch a random PostalItem:", err)
-			continue
-		}
-		break
+	
+	if err := db.Order("RANDOM()").First(&postalItem).Error; err != nil {
+		log.Println("Failed to fetch a random PostalItem:", err)
+		return nil	
 	}
+
 	log.Printf("Selected PostalItem ID: %d, TrackNum: %s", postalItem.ID, postalItem.TrackNum)
 
 	senderID := postalItem.SenderID
