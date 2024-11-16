@@ -16,3 +16,10 @@ tasks:
     description: "Drop the database"
     cmds:
       - psql -U postgres -c "DROP DATABASE POCHTA_RUSSIA;" || true
+  delete:
+    description: "Delete docker containers"
+    cmds:
+      - sudo docker rm $(sudo docker ps -aq)
+  stop:
+    cmds:
+      - sudo docker stop $(sudo docker ps -aq)
