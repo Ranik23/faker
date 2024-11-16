@@ -2,6 +2,7 @@ package seeds
 
 import (
 	"faker/internal/models"
+	random_user "faker/internal/random"
 	"log"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -17,10 +18,18 @@ func CreateAddress(db *gorm.DB) *models.Address {
 	}
 	log.Printf("Selected customer ID: %d, Name: %s", customer.ID, customer.Name)
 
+	country, city, street := random_user.GetRandomUser()
+
+	if country == "" || city == "" {
+		country = gofakeit.Country()
+		city = gofakeit.City()
+		street = gofakeit.StreetName()
+	}
+
 	address := models.Address{
-		Country:    gofakeit.Country(),
-		City:       gofakeit.City(),
-		Street:     gofakeit.StreetName(),
+		Country:    country,
+		City:       city,
+		Street:     street,
 		PostalCode: gofakeit.Zip(),
 		CustomerID: customer.ID,
 	}
