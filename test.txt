@@ -1,0 +1,37 @@
+WITH RECURSIVE StatusCTE AS (
+    SELECT id, postal_item_id, status_id, status_date, description, employee_id
+    FROM status_transactions
+    WHERE postal_item_id = 5 AND status_id = 1  -- Замените на нужный ID почтового отправления
+    UNION ALL
+    SELECT st.id, st.postal_item_id, st.status_id, st.status_date, st.description, st.employee_id
+    FROM status_transactions st
+    INNER JOIN StatusCTE cte ON st.postal_item_id = cte.postal_item_id
+    WHERE (
+        (cte.status_id = 1 AND st.status_id = 2) OR
+        (cte.status_id = 2 AND st.status_id IN (3, 4))
+    )
+)
+SELECT * FROM StatusCTE;
+
+
+SELECT
+    pi.id AS postal_item_id,
+    pi.track_num AS track_number,
+    ps.status_name AS status_name,
+    MAX(st.status_date) AS last_status_date,
+    e.name AS employee_name,
+    e.position AS employee_position,
+    po.name AS post_office_name,
+    COUNT(st.id) AS total_transactions
+FROM
+    status_transactions st
+JOIN postal_items pi ON st.postal_item_id = pi.id
+JOIN postal_statuses ps ON st.status_id = ps.id
+JOIN employees e ON st.employee_id = e.id
+JOIN post_offices po ON e.post_office_id = po.id
+WHERE
+    pi.id = 5
+GROUP BY
+    pi.id, pi.track_num, ps.status_name, e.name, e.position, po.name
+ORDER BY
+    last_status_date DESC;

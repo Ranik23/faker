@@ -9,7 +9,7 @@ ORDER BY weight DESC;
 ```
 ![](screens/2.png)
 
-2. Просмотр всех отправлений для указанного почтового отделения с сортировкой по дате
+2. **Просмотр всех отправлений для указанного почтового отделения с сортировкой по дате**
 ```SQL
 SELECT * 
 FROM postal_items
@@ -19,16 +19,16 @@ ORDER BY disp_date DESC;
 ![](screens/3.png)
 
 
-3. Получение всех клиентов из конкретной страны
+3. **Получение всех клиентов из конкретной страны**
 ```SQL
 SELECT customers.* 
 FROM customers
 JOIN addresses ON addresses.customer_id = customers.id
-WHERE addresses.country = '<Country>';
+WHERE addresses.country = 'Spain';
 ```
-![](screens/4.png)
+![](screens/Снимок%20экрана%20от%202024-12-01%2004-58-20.png)
 
-4. Подсчёт числа клиентов в каждом городе
+4.**Подсчёт числа клиентов в каждом городе**
 ```SQL
 SELECT addresses.city, COUNT(*) AS client_count
 FROM addresses
@@ -38,7 +38,7 @@ GROUP BY addresses.city;
 
 # Средние запросы
 
-1. Получить список всех подчиненных, офис, и их начальника.
+1. **Получить список всех подчиненных, офис, и их начальника.**
 ```SQL
 SELECT e.Name AS employee_name,
        po.Name AS post_office_name,
@@ -51,7 +51,7 @@ ORDER BY po.name, e.name;
 ```
 ![](screens/6.png)
 
-2. Перечень отделений и сотрудников, работающих в них, с подсчётом количества сотрудников
+2. **Перечень отделений и сотрудников, работающих в них, с подсчётом количества сотрудников**
 ```SQL
 SELECT post_offices.name AS post_office_name, COUNT(employees.id) AS employee_count
 FROM employees
@@ -60,7 +60,7 @@ GROUP BY post_offices.id;
 ```
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-12-26.png)
 
-3. Рассчёт среднего веса отправлений в каждом отделении
+3. **Рассчёт среднего веса отправлений в каждом отделении**
 ```SQL
 SELECT post_offices.name AS post_office_name, AVG(postal_items.weight) AS avg_weight
 FROM postal_items
@@ -69,7 +69,7 @@ GROUP BY post_offices.id;
 ```
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-13-19.png)
 
-4. Статистика по странам с числом отправителей и средним весом их отправлений
+4. **Статистика по странам с числом отправителей и средним весом их отправлений**
 ```SQL
 SELECT
     a.country,                             
@@ -83,7 +83,7 @@ ORDER BY client_count DESC;
 ```
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-14-21.png)
 
-5. Поиск всех сотрудников, которые не обрабатывали отправления в течение последних 30 дней
+5. **Поиск всех сотрудников, которые не обрабатывали отправления в течение последних 30 дней**
 ```SQL
 SELECT 
     e.name AS employee_name,
@@ -96,7 +96,7 @@ ORDER BY e.name;
 ```
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-15-19.png)
 
-6. Запрос для получения статистики по состояниям товаров с информацией о клиентах и почтовых отделениях
+6. **Запрос для получения статистики по состояниям товаров с информацией о клиентах и почтовых отделениях**
 ```SQL
 SELECT 
     pi.id AS postal_item_id, 
@@ -132,9 +132,25 @@ ORDER BY
 ```
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-16-21.png)
 
+7. **Вывод тех почтовых отделений, у которых слишкмо много сотрудников, но мало посылок проходит через них** 
+   ```SQL
+    SELECT po.id AS post_office_id, 
+       po.name AS post_office_name, 
+       COUNT(DISTINCT e.id) AS employee_count, 
+       COUNT(DISTINCT pi.id) AS postal_item_count, 
+       (COUNT(DISTINCT pi.id) * 1.0 / COUNT(DISTINCT e.id)) AS load_per_employee
+    FROM post_offices po
+    LEFT JOIN employees e ON e.post_office_id = po.id
+    LEFT JOIN postal_items pi ON pi.post_office_id = po.id
+    GROUP BY po.id
+    HAVING COUNT(DISTINCT e.id) > 0
+    ORDER BY load_per_employee DESC;
+   ```
+    ![](/screens/Снимок%20экрана%20от%202024-12-01%2005-04-43.png)
+
 # Сложные запросы
 
-1. Запрос для получения всех клиентов, которые не оплатили отправление, и суммы их задолженности, сгруппированные по почтовым отделениям
+1. **Запрос для получения всех клиентов, которые не оплатили отправление, и суммы их задолженности, сгруппированные по почтовым отделениям**
 ```SQL
 SELECT 
     post_offices.name AS post_office_name, 
@@ -154,7 +170,7 @@ GROUP BY post_offices.id, post_offices.name, customers.id, customers.name;
 ![Скрин](screens/1.png).
 
 
-2. Запрос выведет таблицу с информацией о всех отправлениях, которые были отправлены не более 1000 дней назад, и их аттрибутами
+2. **Запрос выведет таблицу с информацией о всех отправлениях, которые были отправлены не более 1000 дней назад, и их аттрибутами**
 ```SQL
 WITH StatusDetails AS (
     SELECT 
@@ -212,7 +228,7 @@ ORDER BY
 ```
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-17-17.png)
 
-3. Поиск клиентов с самыми дорогими отправлениями, которые еще не были оплачены
+3. **Поиск клиентов с самыми дорогими отправлениями, которые еще не были оплачены**
 ```SQL
 SELECT 
     c.name AS customer_name,
@@ -230,7 +246,7 @@ ORDER BY debt DESC;
 ```
 Опять же ничего не выведет, так как все отправления всегда оплачены (можно в цикле создавать меньше платежек, и убрать ограничение на проверку оплаты посылки)
 
-4. Найти отправления с наибольшими задержками, сгруппированные по статусам, включая информацию о сотрудниках и почтовых отделениях
+4. **Найти отправления с наибольшими задержками, сгруппированные по статусам, включая информацию о сотрудниках и почтовых отделениях**
    ```SQL 
     WITH DelayedItems AS (
         SELECT 
@@ -267,7 +283,7 @@ ORDER BY debt DESC;
     ```
     ![](screens/Снимок%20экрана%20от%202024-12-01%2004-20-23.png)
 
-5. Запрос извлекает информацию о статусах транзакций для определенного товара
+5. **Запрос извлекает информацию о статусах транзакций для определенного товара**
 ```SQL
 SELECT
     pi.id AS postal_item_id,
@@ -291,5 +307,23 @@ GROUP BY
 ORDER BY
     last_status_date DESC;
 ```
-
 ![](screens/Снимок%20экрана%20от%202024-12-01%2004-21-21.png)
+
+6.**Рекурсивно извлекаем историю транзакция для посылки**
+   ```SQL 
+    WITH RECURSIVE StatusCTE AS (
+    SELECT id, postal_item_id, status_id, status_date, description, employee_id
+    FROM status_transactions
+    WHERE postal_item_id = 5 AND status_id = 1
+    UNION ALL
+    SELECT st.id, st.postal_item_id, st.status_id, st.status_date, st.description, st.employee_id
+    FROM status_transactions st
+    INNER JOIN StatusCTE cte ON st.postal_item_id = cte.postal_item_id
+    WHERE (
+        (cte.status_id = 1 AND st.status_id = 2) OR
+        (cte.status_id = 2 AND st.status_id IN (3, 4))
+    )
+    )
+    SELECT * FROM StatusCTE;
+   ```
+   ![](screens/Снимок%20экрана%20от%202024-12-01%2004-51-51.png)
