@@ -2,23 +2,16 @@ version: "3"
 
 tasks:
   run:
-    description: "Build and run the application with Docker Compose"
     cmds:
       - DB_HOST=localhost DB_PORT=5432 DB_USER=postgres DB_PASSWORD=postgres DB_NAME=pochta_russia go run cmd/main/main.go
-
-
   up:
-    description: "Initialize the database and start the Go application"
     cmds:
       - psql -U postgres -c "CREATE DATABASE POCHTA_RUSSIA;" || true
       - DB_HOST=localhost DB_PORT=5432 DB_USER=postgres DB_PASSWORD=postgres DB_NAME=pochta_russia go run cmd/main/main.go
-
   down:
-    description: "Drop the database"
     cmds:
       - psql -U postgres -c "DROP DATABASE POCHTA_RUSSIA;" || true
   delete:
-    description: "Delete docker containers"
     cmds:
       - docker rm $(sudo docker ps -aq)
   stop:
