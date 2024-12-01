@@ -2,6 +2,8 @@ package models
 
 import "time"
 
+
+
 type PostOffice struct {
 	ID           	uint      `gorm:"primaryKey"`
 	Name         	string    `gorm:"not null"`
